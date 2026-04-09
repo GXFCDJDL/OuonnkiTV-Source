@@ -1,6 +1,14 @@
 {
+  "name": "ouonnkitv-source",
+  "version": "1.0.0",
+  "description": "为 OuonnkiTV 提供视频源配置",
+  "scripts": {
+    "start": "node start.js",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check ."
+  },
   "dependencies": {
     "axios": "^1.13.5",
-    "p-limit": "^7.3.0"
+    "cli-table3": "^0.6.5"
   }
 }

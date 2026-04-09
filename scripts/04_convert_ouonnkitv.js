@@ -31,7 +31,9 @@ function saveJson(filename, records) {
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
     const results = JSON.parse(fs.readFileSync(inputFile, "utf8")).results;
-    const sorted = results.filter((r) => r.searchStatus === "success").sort((a, b) => (a.searchDuration || Infinity) - (b.searchDuration || Infinity));
+    const sorted = results
+      .filter((r) => r.searchStatus === "success")
+      .sort((a, b) => (a.searchDuration || Infinity) - (b.searchDuration || Infinity));
 
     for (const { name, filter } of outputs) {
       const count = saveJson(name, filter(sorted));

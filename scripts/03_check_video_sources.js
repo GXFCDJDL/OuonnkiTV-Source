@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
+const Table = require("cli-table3");
 const appConfig = require("../config.js");
 
 const CONFIG_PATH = path.join(__dirname, "..", "tv_source", "LunaTV", "LunaTV-processed.json");
@@ -30,7 +31,33 @@ const SEARCH_STATUS = {
   FAILED: "failed",
 };
 
+// 状态图标
+const STATUS_ICONS = {
+  [SEARCH_STATUS.SUCCESS]: "✓",
+  [SEARCH_STATUS.NO_RESULTS]: "○",
+  [SEARCH_STATUS.MISMATCH]: "○",
+  [SEARCH_STATUS.FAILED]: "✗",
+};
+
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// 清行并移动光标到行首
+function clearLine() {
+  process.stdout.write("\r\x1b[K");
+}
+
+// 格式化时长
+function formatDuration(ms) {
+  if (ms === null) return "----";
+  if (ms < 1000) return `${ms}ms`;
+  return `${(ms / 1000).toFixed(1)}s`;
+}
+
+// 截断URL
+function truncateUrl(url, maxLen) {
+  if (url.length <= maxLen) return url;
+  return url.slice(0, maxLen - 3) + "...";
+}
 
 async function checkSource(api, keyword) {
   for (let i = 1; i <= CONFIG.maxRetry; i++) {
@@ -61,8 +88,9 @@ async function checkSource(api, keyword) {
   return { status: SEARCH_STATUS.FAILED, duration: null };
 }
 
-async function runWithLimit(tasks, limit, onComplete) {
+async function runWithLimit(tasks, limit, onProgress) {
   const results = new Array(tasks.length);
+  let completed = 0;
   let index = 0;
 
   async function runNext() {
@@ -71,7 +99,8 @@ async function runWithLimit(tasks, limit, onComplete) {
 
     const r = await tasks[i]();
     results[i] = r;
-    onComplete(i, r);
+    completed++;
+    onProgress(i, r, completed, tasks.length);
     await runNext();
   }
 
@@ -113,18 +142,44 @@ async function runWithLimit(tasks, limit, onComplete) {
     };
   });
 
-  const results = await runWithLimit(tasks, CONFIG.concurrent, (i, r) => {
-    const s = sources[i];
-    const durationInfo = r.searchDuration !== null ? ` (${r.searchDuration}ms)` : "";
-    console.log(`[${i + 1}/${sources.length}] ${s.name}`);
-    console.log(`    search: ${r.searchStatus}${durationInfo}`);
-    console.log(`    URL: ${s.api}`);
-    console.log();
+  // 实时显示进度
+  const results = await runWithLimit(tasks, CONFIG.concurrent, (i, r, completed, total) => {
+    const percent = Math.round((completed / total) * 100);
+    const bar = "█".repeat(Math.floor(percent / 5)) + "░".repeat(20 - Math.floor(percent / 5));
+    const icon = STATUS_ICONS[r.searchStatus] || "?";
+    const durationStr = formatDuration(r.searchDuration);
+
+    clearLine();
+    process.stdout.write(`[${bar}] ${percent}% (${completed}/${total}) ${icon} ${sources[i].name} ${durationStr}`);
   });
+
+  clearLine();
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(1);
   const accessible = results.filter((r) => r.searchStatus !== SEARCH_STATUS.FAILED).length;
   const searchOk = results.filter((r) => r.searchStatus === SEARCH_STATUS.SUCCESS).length;
+
+  // 使用 cli-table3 输出结果表格
+  console.log("\n检测结果:\n");
+
+  const table = new Table({
+    head: ["序号", "名称", "状态", "耗时", "URL"],
+    colWidths: [6, 16, 14, 8],
+    style: {
+      head: ["cyan"],
+      border: ["gray"],
+    },
+  });
+
+  results.forEach((r, i) => {
+    const icon = STATUS_ICONS[r.searchStatus] || "?";
+    const statusText = `${icon} ${r.searchStatus}`;
+    const durationStr = formatDuration(r.searchDuration);
+
+    table.push([i + 1, r.name, statusText, durationStr, r.api]);
+  });
+
+  console.log(table.toString());
 
   const formattedDate = new Date().toLocaleString("zh-CN", {
     timeZone: "Asia/Shanghai",
@@ -153,6 +208,6 @@ async function runWithLimit(tasks, limit, onComplete) {
 
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(result, null, 2), "utf-8");
 
-  console.log(`[Done] ${sources.length} sources | ${accessible} accessible | ${searchOk} search ok | ${duration}s`);
+  console.log(`\n[Done] ${sources.length} sources | ${accessible} accessible | ${searchOk} search ok | ${duration}s`);
   console.log(`[Info] 检测结果已保存: ${OUTPUT_PATH}`);
 })();

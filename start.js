@@ -2,7 +2,12 @@ const { execSync } = require("child_process");
 const path = require("path");
 const config = require("./config.js");
 
-const scripts = ["01_download_lunatv_config.js", "02_process_lunatv_config.js", "03_check_video_sources.js", "04_convert_ouonnkitv.js"];
+const scripts = [
+  "01_download_lunatv_config.js",
+  "02_process_lunatv_config.js",
+  "03_check_video_sources.js",
+  "04_convert_ouonnkitv.js",
+];
 
 const scriptsDir = path.join(__dirname, "scripts");
 

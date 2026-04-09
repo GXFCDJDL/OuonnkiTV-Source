@@ -14,3 +14,6 @@ npm-debug.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# 生成的中间文件
+tv_source/LunaTV/
