@@ -35,6 +35,13 @@
     "isEnabled": true
   },
   {
+    "id": "xiaojizy-live",
+    "name": "小鸡资源",
+    "url": "https://api.xiaojizy.live/provide/vod",
+    "detailUrl": "https://xiaojizy.live",
+    "isEnabled": true
+  },
+  {
     "id": "hsckzy-xyz",
     "name": "黄色仓库",
     "url": "https://hsckzy.xyz/api.php/provide/vod",
