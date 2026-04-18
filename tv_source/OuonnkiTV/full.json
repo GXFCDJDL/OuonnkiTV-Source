@@ -28,17 +28,17 @@
     "isEnabled": true
   },
   {
+    "id": "ikunzy-com",
+    "name": "iKun资源",
+    "url": "https://ikunzyapi.com/api.php/provide/vod",
+    "detailUrl": "https://ikunzy.com",
+    "isEnabled": true
+  },
+  {
     "id": "www-maoyanzy-com",
     "name": "猫眼资源",
     "url": "https://api.maoyanapi.top/api.php/provide/vod",
     "detailUrl": "https://www.maoyanzy.com",
-    "isEnabled": true
-  },
-  {
-    "id": "cj-lzcaiji-com",
-    "name": "量子资源",
-    "url": "https://cj.lzcaiji.com/api.php/provide/vod",
-    "detailUrl": "https://cj.lzcaiji.com",
     "isEnabled": true
   },
   {
@@ -53,13 +53,6 @@
     "name": "魔都资源",
     "url": "https://www.mdzyapi.com/api.php/provide/vod",
     "detailUrl": "https://www.moduzy.net",
-    "isEnabled": true
-  },
-  {
-    "id": "bfzy-tv",
-    "name": "暴风资源",
-    "url": "https://bfzyapi.com/api.php/provide/vod",
-    "detailUrl": "https://bfzy.tv",
     "isEnabled": true
   },
   {
@@ -102,20 +95,6 @@
     "name": "金蝉影视",
     "url": "https://zy.jinchancaiji.com/api.php/provide/vod",
     "detailUrl": "https://zy.jinchancaiji.com",
-    "isEnabled": true
-  },
-  {
-    "id": "lzizy-net",
-    "name": "量子影视",
-    "url": "https://cj.lziapi.com/api.php/provide/vod",
-    "detailUrl": "https://lzizy.net",
-    "isEnabled": true
-  },
-  {
-    "id": "1080zyk4-com",
-    "name": "优质资源",
-    "url": "https://api.yzzy-api.com/inc/apijson.php",
-    "detailUrl": "https://1080zyk4.com",
     "isEnabled": true
   },
   {
